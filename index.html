@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Guardiã Rural - MOC</title>
+    <title>Guardiã Rural Pro - MOC</title>
     
     <style>
         :root {
@@ -60,24 +60,23 @@
         .grid {
             display: grid; 
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px; padding: 20px; max-width: 500px; margin: 0 auto;
+            gap: 10px; padding: 15px; max-width: 500px; margin: 0 auto;
         }
 
         .btn {
             aspect-ratio: 1/1; 
             background: var(--azul-logo); 
-            border: 3px solid var(--amarelo-logo);
-            border-radius: 18px; 
-            font-size: 32px; 
+            border: 2px solid var(--amarelo-logo);
+            border-radius: 12px; 
+            font-size: 18px; 
             font-weight: 900; 
             color: white; 
-            box-shadow: 0 5px 15px rgba(45, 70, 185, 0.3);
+            box-shadow: 0 4px 8px rgba(45, 70, 185, 0.2);
             display: flex; align-items: center; justify-content: center;
             transition: transform 0.1s;
         }
         .btn:active { transform: scale(0.85); background: #1a2a8c; }
 
-        /* Modal / Pop-up */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center;
@@ -87,13 +86,13 @@
             background: white; width: 92%; max-width: 360px; padding: 20px;
             border-radius: 25px; text-align: center; border-top: 8px solid var(--amarelo-logo);
         }
-        .ref-header { color: var(--azul-logo); font-size: 11px; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px;}
-        .ref-name { font-size: 20px; font-weight: 900; color: #000; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;}
+        .ref-header { color: var(--azul-logo); font-size: 10px; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px;}
+        .ref-name { font-size: 18px; font-weight: 900; color: #000; text-transform: uppercase; margin-bottom: 12px; border-bottom: 2px solid #eee; padding-bottom: 8px;}
         
-        .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .tech-item { background: #f8f9fa; padding: 8px; border-radius: 10px; border: 1px solid #eee; }
-        .tech-label { display: block; font-size: 10px; color: #777; font-weight: 800; text-transform: uppercase; }
-        .tech-val { display: block; font-size: 14px; color: var(--azul-logo); font-weight: 800; }
+        .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+        .tech-item { background: #f8f9fa; padding: 6px; border-radius: 8px; border: 1px solid #eee; }
+        .tech-label { display: block; font-size: 9px; color: #777; font-weight: 800; text-transform: uppercase; }
+        .tech-val { display: block; font-size: 13px; color: var(--azul-logo); font-weight: 800; }
         .full-width { grid-column: span 2; background: #eef1ff; border-color: var(--azul-logo); }
 
         .maps-link {
@@ -130,7 +129,7 @@
         <div id="m-ref" class="ref-name"></div>
         
         <div class="tech-grid">
-            <div class="tech-item full-width"><span class="tech-label">Direção</span><span id="m-dir" class="tech-val"></span></div>
+            <div class="tech-item full-width"><span class="tech-label">Rodovia / Local</span><span id="m-dir" class="tech-val"></span></div>
             <div class="tech-item"><span class="tech-label">Pontaletes</span><span id="m-pont" class="tech-val"></span></div>
             <div class="tech-item"><span class="tech-label">PTZ</span><span id="m-ptz" class="tech-val"></span></div>
             <div class="tech-item"><span class="tech-label">Analítica</span><span id="m-ana" class="tech-val"></span></div>
@@ -144,67 +143,110 @@
 </div>
 
 <script>
-    // DADOS TÉCNICOS DA PLANILHA RURAL
-    // S = Solar Sim | N = Solar Não
-    const dadosRural = {
-        1: {ref: "EUROFARMA", g: "-16.643067,-43.814701", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        2: {ref: "ESTRADA DA PRODUÇÃO", g: "-16.661129,-43.810569", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        3: {ref: "ESTRADA DA PRODUÇÃO", g: "-16.671169,-43.771169", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        4: {ref: "TABUAS", g: "-16.652512,-43.779147", pont: 1, ptz: 1, ana: 4, lpr: 2, s: "S"},
-        5: {ref: "ESTRADA DA PRODUÇÃO", g: "-16.634123,-43.752391", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        6: {ref: "RIO CANABRAVA", g: "-16.642123,-43.782531", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "S"},
-        7: {ref: "TREVO CAPITAO ENEAS", g: "-16.655123,-43.812312", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        8: {ref: "TREVO FAZENDA BENGO", g: "-16.631257,-43.832174", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        9: {ref: "ESTRADA DA PRODUÇÃO", g: "-16.592581,-43.682531", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "S"},
-        10: {ref: "SÃO PEDRO DA GARÇA", g: "-16.571234,-43.581231", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        11: {ref: "APARECIDA DO MUNDO NOVO", g: "-16.535123,-43.461231", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        12: {ref: "SAMAMBAIA", g: "-16.499812,-43.256812", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        13: {ref: "CHÁCARA RECANTO VITÓRIA", g: "-16.732387,-43.765477", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        14: {ref: "PONTO 17 (MORRO DO MORRO)", g: "-16.711234,-43.758012", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "S"},
-        15: {ref: "VIASOLO ENG. AMBIENTAL", g: "-16.702312,-43.731231", pont: 1, ptz: 0, ana: 0, lpr: 0, s: "N"},
-        16: {ref: "ENTRADA SÃO GERALDO 2", g: "-16.708266,-43.906155", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        17: {ref: "POSTO BARRAL 2", g: "-16.698212,-43.896123", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        18: {ref: "ENTRADA CANTO DO ENGENHO", g: "-16.703644,-43.872421", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "S"},
-        19: {ref: "CANTO DO ENGENHO / CALHAU", g: "-16.698123,-43.871234", pont: 1, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        20: {ref: "PRÓXIMO A TIM BAR", g: "-16.624293,-43.905645", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        21: {ref: "NOVA ESPERANÇA", g: "-16.595874,-43.912384", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        22: {ref: "VALE DOS IPÊS", g: "-16.485678,-43.951231", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        23: {ref: "ERMIDINHA", g: "-16.425612,-43.961231", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        24: {ref: "PEDRA PRETA", g: "-16.397223,-43.985721", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        25: {ref: "SÃO JOÃO DA VEREDA", g: "-16.351234,-44.012312", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        26: {ref: "MIRALTA", g: "-16.531023,-43.952381", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        27: {ref: "VILA NOVA", g: "-16.512312,-43.967812", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        28: {ref: "PANORÂMICA", g: "-16.478612,-43.996111", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        29: {ref: "SANTA ROSA DE LIMA", g: "-16.417111,-43.986812", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        30: {ref: "LAGOINHA", g: "-16.379412,-44.002812", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        31: {ref: "PLANALTO", g: "-16.355812,-44.021231", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        32: {ref: "CAMPOS ELÍSEOS", g: "-16.311234,-44.051212", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
-        33: {ref: "JARDIM ALEGRIA (FACELA)", g: "-16.295812,-44.071231", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"}
+    // DADOS TÉCNICOS EXTRAÍDOS DAS IMAGENS
+    const pontosRural = {
+        "1": {ref: "EUROFARMA", g: "-16.643067,-43.814701", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "2": {ref: "KRE. PRODUÇÃO", g: "-16.661129,-43.810569", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "3": {ref: "KRE. PRODUÇÃO", g: "-16.671169,-43.771169", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "4": {ref: "SAMBAIA", g: "-16.652512,-43.779147", pont: 1, ptz: 1, ana: 4, lpr: 2, s: "S"},
+        "5": {ref: "KRE. PRODUÇÃO", g: "-16.634123,-43.752391", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "6": {ref: "RIO CANABRAVA", g: "-16.642123,-43.782531", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "S"},
+        "7": {ref: "TREVO CAPITÃO ENÉAS", g: "-16.655123,-43.812312", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "8": {ref: "TREVO FAZENDA BARREIRO", g: "-16.631257,-43.832174", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "9": {ref: "KRE. PRODUÇÃO", g: "-16.592581,-43.682531", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "S"},
+        
+        "10.1": {ref: "SÃO PEDRO DA GARÇA", g: "-16.174354,-43.865721", pont: 0, ptz: 1, ana: 2, lpr: 2, s: "N"},
+        "10.2": {ref: "SÃO PEDRO DA GARÇA", g: "-16.171364,-43.864249", pont: 0, ptz: 1, ana: 3, lpr: 2, s: "N"},
+        "10.3": {ref: "SÃO PEDRO DA GARÇA", g: "-16.170329,-43.866304", pont: 0, ptz: 1, ana: 3, lpr: 2, s: "N"},
+        
+        "11.1": {ref: "APARECIDA DO MUNDO NOVO", g: "-16.115268,-43.924987", pont: 0, ptz: 1, ana: 3, lpr: 2, s: "N"},
+        "11.2": {ref: "APARECIDA DO MUNDO NOVO", g: "-16.115054,-43.926347", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "11.3": {ref: "APARECIDA DO MUNDO NOVO", g: "-16.113743,-43.928035", pont: 0, ptz: 1, ana: 3, lpr: 2, s: "N"},
+        
+        "12": {ref: "SAMAMBAIA", g: "-16.499812,-43.256812", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        
+        "13": {ref: "CHÁCARA RECANTO VITÓRIA", g: "-16.732387,-43.765477", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "14": {ref: "PONTO 17 (MORRO DO MORRO)", g: "-16.711234,-43.758012", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "S"},
+        
+        "15.1": {ref: "VIASOLO ENG. AMBIENTAL", g: "-16.80261,-43.74253", pont: 1, ptz: 0, ana: 2, lpr: 2, s: "N"},
+        "15.2": {ref: "VIASOLO ENG. AMBIENTAL", g: "-16.802308,-43.742994", pont: 0, ptz: 1, ana: 0, lpr: 0, s: "N"},
+        "15.3": {ref: "VIASOLO ENG. AMBIENTAL", g: "-16.802445,-43.742443", pont: 1, ptz: 0, ana: 2, lpr: 2, s: "N"},
+
+        "16": {ref: "ENTRADA SÃO GERALDO 2", g: "-16.708266,-43.906155", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "17": {ref: "POSTO BARRAL 2", g: "-16.698212,-43.896123", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        
+        "18.1": {ref: "ENTRADA CANTO DO ENGENHO", g: "-16.856596,-44.053928", pont: 0, ptz: 1, ana: 3, lpr: 3, s: "S"},
+        "18.2": {ref: "CANTO DO ENGENHO", g: "-16.908136,-44.072303", pont: 0, ptz: 1, ana: 3, lpr: 1, s: "N"},
+        
+        "19": {ref: "CANTO DO ENGENHO / CALHAU", g: "-16.698123,-43.871234", pont: 1, ptz: 1, ana: 4, lpr: 2, s: "N"},
+
+        "20": {ref: "PRÓXIMO A TIM BAR", g: "-16.624293,-43.905645", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+
+        "21.1": {ref: "NOVA ESPERANÇA", g: "-16.591795,-43.939539", pont: 0, ptz: 1, ana: 3, lpr: 2, s: "N"},
+        "21.2": {ref: "NOVA ESPERANÇA", g: "-16.583996,-43.938143", pont: 0, ptz: 1, ana: 4, lpr: 3, s: "N"},
+        "21.3": {ref: "NOVA ESPERANÇA", g: "-16.583171,-43.939690", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "21.4": {ref: "NOVA ESPERANÇA", g: "-16.579846,-43.939828", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "21.5": {ref: "NOVA ESPERANÇA", g: "-16.581552,-43.932128", pont: 0, ptz: 1, ana: 3, lpr: 2, s: "N"},
+
+        "22": {ref: "VALE DOS IPÊS", g: "-16.485678,-43.951231", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+
+        "23.1": {ref: "ERMIDINHA", g: "-16.430596,-44.088530", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "23.2": {ref: "ERMIDINHA", g: "-16.426618,-44.092428", pont: 0, ptz: 1, ana: 2, lpr: 2, s: "N"},
+        "23.3": {ref: "ERMIDINHA", g: "-16.432924,-44.090728", pont: 0, ptz: 1, ana: 4, lpr: 0, s: "N"},
+
+        "24.1": {ref: "PEDRA PRETA", g: "-16.397228,-44.146957", pont: 0, ptz: 1, ana: 2, lpr: 1, s: "N"},
+        "24.2": {ref: "PEDRA PRETA", g: "-16.400718,-44.148533", pont: 0, ptz: 1, ana: 2, lpr: 1, s: "N"},
+
+        "25.1": {ref: "SÃO JOÃO DA VEREDA", g: "-16.700472,-44.114599", pont: 0, ptz: 1, ana: 3, lpr: 1, s: "N"},
+        "25.2": {ref: "SÃO JOÃO DA VEREDA", g: "-16.701558,-44.114982", pont: 0, ptz: 1, ana: 4, lpr: 0, s: "N"},
+        "25.3": {ref: "SÃO JOÃO DA VEREDA", g: "-16.702478,-44.114267", pont: 0, ptz: 1, ana: 4, lpr: 1, s: "N"},
+
+        "26": {ref: "MIRALTA", g: "-16.531023,-43.952381", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+
+        "27.1": {ref: "VILA NOVA", g: "-16.459359,-43.866763", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+        "27.2": {ref: "VILA NOVA", g: "-16.460815,-43.867670", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+
+        "28": {ref: "PANORÂMICA", g: "-16.478612,-43.996111", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+
+        "29.1": {ref: "SANTA ROSA DE LIMA", g: "-16.353900,-43.965950", pont: 0, ptz: 1, ana: 2, lpr: 2, s: "N"},
+        "29.2": {ref: "SANTA ROSA DE LIMA", g: "-16.347114,-43.963303", pont: 0, ptz: 1, ana: 4, lpr: 0, s: "N"},
+        "29.3": {ref: "SANTA ROSA DE LIMA", g: "-16.345021,-43.963812", pont: 0, ptz: 1, ana: 2, lpr: 2, s: "N"},
+
+        "30": {ref: "LAGOINHA", g: "-16.379412,-44.002812", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
+
+        "31.1": {ref: "PLANALTO", g: "-16.895852,-43.867733", pont: 0, ptz: 1, ana: 2, lpr: 0, s: "N"},
+        "31.2": {ref: "PONTALETE", g: "-16.896464,-43.867820", pont: 1, ptz: 0, ana: 2, lpr: 2, s: "N"},
+
+        "32.1": {ref: "CAMPOS ELÍSEOS", g: "-16.662308,-43.767341", pont: 0, ptz: 1, ana: 4, lpr: 3, s: "N"},
+        "32.2": {ref: "CAMPOS ELÍSEOS", g: "-16.640891,-43.746476", pont: 0, ptz: 1, ana: 3, lpr: 2, s: "N"},
+        
+        "33": {ref: "JARDIM ALEGRIA (FACELA)", g: "-16.295812,-44.071231", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"}
     };
 
-    const grid = document.getElementById('mainGrid');
-
-    function getDirecao(id) {
-        if (id >= 1 && id <= 12) return "ESTRADA DA PRODUÇÃO";
-        if (id >= 13 && id <= 15) return "MG 308";
-        if (id >= 16 && id <= 19) return "BR 365";
+    function getDirecao(idStr) {
+        const id = parseFloat(idStr);
+        if (id >= 1 && id < 13) return "ESTRADA DA PRODUÇÃO";
+        if (id >= 13 && id < 16) return "MG 308";
+        if (id >= 16 && id < 20) return "BR 365";
         if (id >= 20 && id <= 33) return "BR 135";
         return "OUTROS";
     }
 
+    const grid = document.getElementById('mainGrid');
+
     function render() {
         let html = '';
-        for (let i = 1; i <= 33; i++) {
-            const d = getDirecao(i);
-            const r = dadosRural[i].ref;
-            html += `<button class="btn" data-dir="${d}" data-ref="${r}" onclick="ver(${i})">${i}</button>`;
-        }
+        Object.keys(pontosRural).sort((a, b) => parseFloat(a) - parseFloat(b)).forEach(key => {
+            const d = getDirecao(key);
+            const r = pontosRural[key].ref;
+            html += `<button class="btn" data-dir="${d}" data-ref="${r}" onclick="ver('${key}')">${key}</button>`;
+        });
         grid.innerHTML = html;
     }
 
     function ver(id) {
         if (navigator.vibrate) navigator.vibrate(50);
-        const p = dadosRural[id];
+        const p = pontosRural[id];
         const direcao = getDirecao(id);
 
         document.getElementById('m-ref').innerText = p.ref;
@@ -214,7 +256,6 @@
         document.getElementById('m-ana').innerText = p.ana;
         document.getElementById('m-lpr').innerText = p.lpr;
         
-        // Lógica do Poste Solar (SIM / NÃO)
         const solarText = (p.s === "S") ? "SIM" : "NÃO";
         document.getElementById('m-solar').innerText = solarText;
         document.getElementById('solar-box').style.background = (p.s === "S") ? "#fff9c4" : "#eef1ff";
@@ -246,4 +287,3 @@
 </script>
 </body>
 </html>
-
