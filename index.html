@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Guardiã Rural Pro - MOC</title>
+    <title>Guardiã Rural Pro</title>
     
     <style>
         :root {
-            --azul-logo: #2D46B9;
-            --amarelo-logo: #E9C143;
-            --verde-maps: #34a853;
-            --bg: #f8f9fa;
-            --texto: #1a1a1a;
+            --azul: #2D46B9;
+            --amarelo: #E9C143;
+            --verde: #34a853;
+            --bg: #f2f2f7;
+            --card: #ffffff;
             --safe-top: env(safe-area-inset-top);
         }
 
@@ -23,170 +23,129 @@
             font-family: -apple-system, system-ui, sans-serif; 
             background-color: var(--bg); 
             margin: 0; 
-            /* Espaço ajustado para o novo dashboard */
-            padding-top: calc(var(--safe-top) + 265px); 
+            /* Espaço para o cabeçalho dinâmico */
+            padding-top: calc(var(--safe-top) + 160px); 
+            transition: padding-top 0.3s ease;
         }
 
+        /* CABEÇALHO GLASSMORPHISM */
         header { 
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             position: fixed; top: 0; width: 100%; z-index: 1000;
             padding-top: var(--safe-top);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            text-align: center;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.05);
         }
 
-        .logo-container { padding: 10px; }
-        .logo-img { height: 60px; width: auto; }
-        
-        .search-container { padding: 5px 15px; }
+        .logo-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; }
+        .logo-img { height: 45px; width: auto; }
+        .btn-stats { 
+            background: var(--azul); color: white; border: none; 
+            padding: 8px 12px; border-radius: 20px; font-size: 11px; font-weight: 800;
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        .search-area { padding: 0 15px 10px 15px; }
         #searchBar {
-            width: 100%; padding: 12px; border-radius: 10px;
-            border: 2px solid #eee; background: #f1f3f4; font-size: 16px; outline: none;
+            width: 100%; padding: 12px 15px; border-radius: 12px;
+            border: none; background: rgba(0,0,0,0.05); font-size: 16px; outline: none;
+            transition: background 0.2s;
         }
+        #searchBar:focus { background: rgba(0,0,0,0.08); }
 
-        /* --- ESTILO DO DASHBOARD / RESUMO --- */
-        .dashboard-toggle {
-            background: var(--azul-logo);
-            color: white;
-            border: none;
-            width: calc(100% - 30px);
-            margin: 5px 15px;
-            padding: 8px;
-            border-radius: 8px;
-            font-weight: 800;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        /* DASHBOARD MODERNO */
+        #dashboard {
+            display: none; background: white; padding: 15px;
+            border-bottom: 1px solid #ddd; animation: slideDown 0.3s ease-out;
         }
+        @keyframes slideDown { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
+        
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .stat-card { background: #f8f9fa; padding: 10px; border-radius: 10px; text-align: center; border-bottom: 3px solid var(--azul); }
+        .stat-card.solar { border-bottom-color: var(--amarelo); }
+        .stat-num { display: block; font-size: 18px; font-weight: 900; color: var(--azul); }
+        .stat-label { font-size: 9px; font-weight: 800; color: #666; text-transform: uppercase; }
 
-        #dashboard-content {
-            display: none;
-            background: white;
-            padding: 15px;
-            margin: 0 15px 10px 15px;
-            border-radius: 12px;
-            border: 2px solid var(--amarelo-logo);
-            max-height: 300px;
-            overflow-y: auto;
-            text-align: left;
-        }
-
-        .stats-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11px;
-            margin-bottom: 15px;
-        }
-
-        .stats-table th {
-            background: #f0f2f5;
-            color: var(--azul-logo);
-            text-align: left;
-            padding: 6px;
-            border-bottom: 2px solid var(--amarelo-logo);
-            text-transform: uppercase;
-        }
-
-        .stats-table td {
-            padding: 6px;
-            border-bottom: 1px solid #eee;
-            font-weight: 700;
-        }
-
-        .total-row { background: #eef1ff; color: var(--azul-logo); font-weight: 900 !important; }
-
+        /* CATEGORIAS */
         .categories {
-            display: flex; overflow-x: auto; padding: 10px 15px; gap: 8px;
-            scrollbar-width: none; background: white;
+            display: flex; overflow-x: auto; padding: 5px 15px 12px; gap: 8px;
+            scrollbar-width: none;
         }
         .categories::-webkit-scrollbar { display: none; }
         .pill {
-            padding: 8px 18px; border-radius: 20px; background: #eee;
-            border: none; color: #555; font-size: 11px; font-weight: 800;
-            white-space: nowrap; text-transform: uppercase;
+            padding: 8px 16px; border-radius: 20px; background: #e5e5ea;
+            border: none; color: #3a3a3c; font-size: 11px; font-weight: 800;
+            white-space: nowrap; transition: 0.2s;
         }
-        .pill.active { background: var(--azul-logo); color: white; }
+        .pill.active { background: var(--azul); color: white; transform: scale(1.05); }
 
+        /* GRADE DE BOTÕES */
         .grid {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 10px; padding: 20px; max-width: 500px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px; padding: 15px; max-width: 600px; margin: 0 auto;
         }
 
         .btn {
-            aspect-ratio: 1/1; background: var(--azul-logo); border: 2px solid var(--amarelo-logo);
-            border-radius: 12px; font-size: 18px; font-weight: 900; color: white; 
-            display: flex; align-items: center; justify-content: center;
+            aspect-ratio: 1/1; background: var(--azul); 
+            border: 2px solid var(--amarelo); border-radius: 18px; 
+            font-size: 22px; font-weight: 900; color: white; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.1s;
         }
+        .btn-solar { background: var(--amarelo) !important; color: var(--azul) !important; border-color: var(--azul) !important; }
+        .btn-solar::after { content: '☀️'; font-size: 10px; margin-top: 2px; }
+        
+        .btn:active { transform: scale(0.9); opacity: 0.8; }
 
-        .btn-solar { background: var(--amarelo-logo) !important; color: var(--azul-logo) !important; border: 2px solid var(--azul-logo) !important;}
-
+        /* MODAL ESTILO IPHONE */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center;
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.6); z-index: 2000; align-items: flex-end; 
         }
         .modal-box {
-            background: white; width: 92%; max-width: 360px; padding: 20px;
-            border-radius: 25px; text-align: center; border-top: 8px solid var(--amarelo-logo);
+            background: white; width: 100%; padding: 25px 20px calc(25px + env(safe-area-inset-bottom));
+            border-radius: 30px 30px 0 0; text-align: center;
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        .tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
-        .tech-item { background: #f8f9fa; padding: 6px; border-radius: 8px; border: 1px solid #eee; }
-        .tech-label { display: block; font-size: 9px; color: #777; font-weight: 800; text-transform: uppercase; }
-        .tech-val { display: block; font-size: 13px; color: var(--azul-logo); font-weight: 800; }
-        .full-width { grid-column: span 2; background: #eef1ff; border-color: var(--azul-logo); }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .tech-tag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .tech-tag { background: #f2f2f7; padding: 12px; border-radius: 15px; text-align: center; }
+        .tech-tag b { display: block; font-size: 16px; color: var(--azul); }
+        .tech-tag small { font-size: 10px; font-weight: 800; color: #8e8e93; text-transform: uppercase; }
 
         .maps-link {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            background: var(--verde-maps); color: white; text-decoration: none;
-            padding: 14px; border-radius: 12px; font-weight: 700; margin-bottom: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: var(--verde); color: white; text-decoration: none;
+            padding: 16px; border-radius: 16px; font-weight: 800; margin-bottom: 12px;
+            box-shadow: 0 5px 15px rgba(52,168,83,0.3);
         }
 
-        .close-btn { background: #f1f3f4; color: #666; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: 700; }
+        .close-btn { background: #f2f2f7; color: #3a3a3c; border: none; padding: 14px; border-radius: 16px; width: 100%; font-weight: 800; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo-container"><img src="logo.png" alt="Guardiã" class="logo-img"></div>
-    
-    <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Pesquisar referencia ou nº..." onkeyup="filtrar()">
+<header id="header">
+    <div class="logo-bar">
+        <img src="logo.png" alt="Logo" class="logo-img">
+        <button class="btn-stats" onclick="toggleDash()">📊 PROJETO</button>
     </div>
 
-    <!-- BOTÃO PARA VER O RESUMO -->
-    <button class="dashboard-toggle" onclick="toggleDash()">📊 Ver Resumo Geral do Projeto</button>
+    <div id="dashboard">
+        <div class="stat-grid">
+            <div class="stat-card"><span class="stat-num">312</span><span class="stat-label">Equipamentos</span></div>
+            <div class="stat-card"><span class="stat-num">51</span><span class="stat-label">Câmeras PTZ</span></div>
+            <div class="stat-card"><span class="stat-num">99</span><span class="stat-label">Câmeras LPR</span></div>
+            <div class="stat-card"><span class="stat-num">162</span><span class="stat-label">Analíticas</span></div>
+            <div class="stat-card solar"><span class="stat-num">54</span><span class="stat-label">Postes Solares</span></div>
+            <div class="stat-card"><span class="stat-num">3</span><span class="stat-label">Pontaletes</span></div>
+        </div>
+    </div>
 
-    <!-- CONTEÚDO DO RESUMO (DADOS DAS IMAGENS) -->
-    <div id="dashboard-content">
-        <div style="font-size: 10px; font-weight: 900; color: var(--azul-logo); margin-bottom: 8px; text-align: center; letter-spacing: 1px;">DADOS GERAIS DO MONITORAMENTO</div>
-        
-        <!-- Tabela 1: Totais por Tecnologia -->
-        <table class="stats-table">
-            <thead>
-                <tr><th>Tipo</th><th>Qtd</th><th>Tipo</th><th>Qtd</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>CÂMERAS PTZ</td><td>51</td><td>ANALÍTICA</td><td>162</td></tr>
-                <tr><td>CÂMERAS LPR</td><td>99</td><td>PONTALETES</td><td>3</td></tr>
-                <tr class="total-row"><td colspan="3">TOTAL GERAL EQUIPAMENTOS</td><td>312</td></tr>
-            </tbody>
-        </table>
-
-        <!-- Tabela 2: Detalhamento por Rodovia -->
-        <table class="stats-table" style="margin-bottom: 0;">
-            <thead>
-                <tr><th>Local</th><th>Postes/Pont.</th><th>Câmeras</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>ESTRADA DA PRODUÇÃO</td><td>16</td><td>98</td></tr>
-                <tr><td>MG 308</td><td>5</td><td>23</td></tr>
-                <tr><td>BR 365</td><td>5</td><td>31</td></tr>
-                <tr><td>BR 135</td><td>28</td><td>160</td></tr>
-                <tr class="total-row"><td>TOTAL</td><td>54</td><td>312</td></tr>
-            </tbody>
-        </table>
+    <div class="search-area">
+        <input type="text" id="searchBar" placeholder="Pesquisar ponto ou referência..." onkeyup="filtrar()">
     </div>
 
     <div class="categories">
@@ -200,21 +159,21 @@
 
 <div class="grid" id="mainGrid"></div>
 
-<div id="modal">
-    <div class="modal-box">
-        <div style="color: var(--azul-logo); font-size: 10px; font-weight: 800;">DETALHES DO PONTO</div>
-        <div id="m-ref" style="font-size: 18px; font-weight: 900; margin: 10px 0; text-transform: uppercase;"></div>
+<div id="modal" onclick="fechar(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+        <div style="width: 40px; height: 5px; background: #ddd; border-radius: 5px; margin: 0 auto 15px;"></div>
+        <div id="m-dir" style="font-size: 11px; font-weight: 800; color: var(--azul); letter-spacing: 1px;"></div>
+        <div id="m-ref" style="font-size: 22px; font-weight: 900; margin: 5px 0 20px; text-transform: uppercase;"></div>
         
-        <div class="tech-grid">
-            <div class="tech-item full-width"><span class="tech-label">Rodovia</span><span id="m-dir" class="tech-val"></span></div>
-            <div class="tech-item"><span class="tech-label">Pontaletes</span><span id="m-pont" class="tech-val"></span></div>
-            <div class="tech-item"><span class="tech-label">PTZ</span><span id="m-ptz" class="tech-val"></span></div>
-            <div class="tech-item"><span class="tech-label">Analítica</span><span id="m-ana" class="tech-val"></span></div>
-            <div class="tech-item"><span class="tech-label">LPR</span><span id="m-lpr" class="tech-val"></span></div>
-            <div class="tech-item full-width" id="solar-box"><span class="tech-label">Poste Solar</span><span id="m-solar" class="tech-val"></span></div>
+        <div class="tech-tag-grid">
+            <div class="tech-tag"><small>PTZ</small><b id="m-ptz"></b></div>
+            <div class="tech-tag"><small>LPR</small><b id="m-lpr"></b></div>
+            <div class="tech-tag"><small>Analítica</small><b id="m-ana"></b></div>
+            <div class="tech-tag"><small>Pontaletes</small><b id="m-pont"></b></div>
+            <div class="tech-tag" style="grid-column: span 2;" id="solar-tag"><small>Energia</small><b id="m-solar"></b></div>
         </div>
 
-        <a id="maps-url" href="" target="_blank" class="maps-link">📍 VER NO MAPA</a>
+        <a id="maps-url" href="" target="_blank" class="maps-link">📍 VER NO GOOGLE MAPS</a>
         <button class="close-btn" onclick="fechar()">FECHAR</button>
     </div>
 </div>
@@ -278,8 +237,15 @@
     };
 
     function toggleDash() {
-        const content = document.getElementById('dashboard-content');
-        content.style.display = (content.style.display === 'block') ? 'none' : 'block';
+        const dash = document.getElementById('dashboard');
+        const header = document.getElementById('header');
+        if (dash.style.display === 'block') {
+            dash.style.display = 'none';
+            document.body.style.paddingTop = 'calc(var(--safe-top) + 160px)';
+        } else {
+            dash.style.display = 'block';
+            document.body.style.paddingTop = 'calc(var(--safe-top) + 330px)';
+        }
     }
 
     function getDirecao(idStr) {
@@ -291,17 +257,14 @@
         return "OUTROS";
     }
 
-    const grid = document.getElementById('mainGrid');
-
     function render() {
         let html = '';
-        Object.keys(pontosRural).sort((a, b) => parseFloat(a) - parseFloat(b)).forEach(key => {
+        Object.keys(pontosRural).sort((a,b) => parseFloat(a)-parseFloat(b)).forEach(key => {
             const p = pontosRural[key];
-            const d = getDirecao(key);
             const solarClass = (p.s === "S") ? "btn-solar" : "";
-            html += `<button class="btn ${solarClass}" data-dir="${d}" data-ref="${p.ref}" onclick="ver('${key}')">${key}</button>`;
+            html += `<button class="btn ${solarClass}" data-dir="${getDirecao(key)}" data-ref="${p.ref}" onclick="ver('${key}')">${key}</button>`;
         });
-        grid.innerHTML = html;
+        document.getElementById('mainGrid').innerHTML = html;
     }
 
     function ver(id) {
@@ -309,23 +272,27 @@
         const p = pontosRural[id];
         document.getElementById('m-ref').innerText = p.ref;
         document.getElementById('m-dir').innerText = getDirecao(id);
-        document.getElementById('m-pont').innerText = p.pont;
         document.getElementById('m-ptz').innerText = p.ptz;
-        document.getElementById('m-ana').innerText = p.ana;
         document.getElementById('m-lpr').innerText = p.lpr;
-        document.getElementById('m-solar').innerText = (p.s === "S") ? "SIM" : "NÃO";
-        document.getElementById('solar-box').style.background = (p.s === "S") ? "#fff9c4" : "#eef1ff";
+        document.getElementById('m-ana').innerText = p.ana;
+        document.getElementById('m-pont').innerText = p.pont;
+        document.getElementById('m-solar').innerText = p.s === "S" ? "POSTE SOLAR" : "CONVENCIONAL";
+        document.getElementById('solar-tag').style.background = p.s === "S" ? "#fff9c4" : "#f2f2f7";
         document.getElementById('maps-url').href = `https://www.google.com/maps/search/?api=1&query=${p.g}`;
         document.getElementById('modal').style.display = "flex";
     }
 
-    function fechar() { document.getElementById('modal').style.display = "none"; }
+    function fechar(e) { 
+        if (!e || e.target === document.getElementById('modal') || e.target.className === 'close-btn') {
+            document.getElementById('modal').style.display = "none";
+        }
+    }
 
     function filtrar() {
-        const termo = document.getElementById('searchBar').value.toUpperCase();
+        const t = document.getElementById('searchBar').value.toUpperCase();
         document.querySelectorAll('.btn').forEach(btn => {
-            const ref = btn.getAttribute('data-ref').toUpperCase();
-            btn.classList.toggle('hidden', !(ref.includes(termo) || btn.innerText === termo));
+            const match = btn.getAttribute('data-ref').toUpperCase().includes(t) || btn.innerText.includes(t);
+            btn.classList.toggle('hidden', !match);
         });
     }
 
