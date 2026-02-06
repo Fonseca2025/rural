@@ -63,6 +63,7 @@
             gap: 10px; padding: 15px; max-width: 500px; margin: 0 auto;
         }
 
+        /* Botão Padrão (Azul) */
         .btn {
             aspect-ratio: 1/1; 
             background: var(--azul-logo); 
@@ -75,7 +76,16 @@
             display: flex; align-items: center; justify-content: center;
             transition: transform 0.1s;
         }
-        .btn:active { transform: scale(0.85); background: #1a2a8c; }
+
+        /* BOTÃO SOLAR (AMARELO) */
+        .btn-solar {
+            background: var(--amarelo-logo) !important;
+            color: var(--azul-logo) !important;
+            border: 2px solid var(--azul-logo) !important;
+            box-shadow: 0 4px 8px rgba(233, 193, 67, 0.4) !important;
+        }
+
+        .btn:active { transform: scale(0.85); opacity: 0.8; }
 
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -143,7 +153,7 @@
 </div>
 
 <script>
-    // DADOS TÉCNICOS EXTRAÍDOS DAS IMAGENS
+    // DADOS TÉCNICOS (S = Solar Sim | N = Solar Não)
     const pontosRural = {
         "1": {ref: "EUROFARMA", g: "-16.643067,-43.814701", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
         "2": {ref: "KRE. PRODUÇÃO", g: "-16.661129,-43.810569", pont: 0, ptz: 1, ana: 4, lpr: 2, s: "N"},
@@ -237,9 +247,14 @@
     function render() {
         let html = '';
         Object.keys(pontosRural).sort((a, b) => parseFloat(a) - parseFloat(b)).forEach(key => {
+            const p = pontosRural[key];
             const d = getDirecao(key);
-            const r = pontosRural[key].ref;
-            html += `<button class="btn" data-dir="${d}" data-ref="${r}" onclick="ver('${key}')">${key}</button>`;
+            const r = p.ref;
+            
+            // ADICIONA CLASSE btn-solar SE p.s FOR "S"
+            const solarClass = (p.s === "S") ? "btn-solar" : "";
+            
+            html += `<button class="btn ${solarClass}" data-dir="${d}" data-ref="${r}" onclick="ver('${key}')">${key}</button>`;
         });
         grid.innerHTML = html;
     }
